@@ -1,0 +1,12 @@
+{
+    "name" : "synth",
+    "version" : "0.0.1",
+    "author" : "Mike Dominice <mike@mikedominice.com>",
+    "description" : "Simple MIDI synth",
+    "license" : "MIT",
+    "repository": {
+        "type": "git",
+        "url": "hhttps://github.com/mdomi/synth.git"
+    },
+    "devDependencies" : {}
+}

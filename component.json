@@ -1,0 +1,7 @@
+{
+    "name" : "synth",
+    "version" : "0.0.1",
+    "dependencies" : {
+        "jquery.midikeys" : "git://github.com/mdomi/jquery.midikeys.git"
+    }
+}
