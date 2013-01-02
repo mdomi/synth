@@ -12,20 +12,39 @@
     </head>
     <body>
         <h1>Synth Plugin Demo</h1>
+        <div>
+            <label for="volume">Volume:</label>
+            <input id="volume" type="range" min="0" max="100" value="1">
+        </div>
         <script src="../components/jquery/jquery.min.js"></script>
         <script src="../components/jquery.midikeys/jquery.keys.js"></script>
         <script src="../synth.js"></script>
         <script>
             var context = new webkitAudioContext();
-            var synth = new Synth(context);
-            synth.connect(context.destination);
+            var buffer = context.createGainNode();
+            buffer.connect(context.destination);
+
+            var synth = new synth.Synth(context, {
+                type : synth.Synth.SQUARE,
+                volumeEnvelope : {
+                    attack : 0.05,
+                    decay : 0.05,
+                    sustain : 0.9,
+                    release : 0.5
+                }
+            });
+            synth.connect(buffer);
             (function ($) {
                 $(function () {
-                    var $log = $('#log');
+
                     $(document.body).midiKeys({
-                        noteOnVelocity : 0x3f
+                        noteOnVelocity : 0x0f
                     }).on('message', function (event, midiEvent) {
                         synth.send(midiEvent.data, midiEvent.timestamp);
+                    });
+
+                    $('#volume').val(buffer.gain.value * 100).on('change', function () {
+                        buffer.gain.value = $(this).val() / 100;
                     });
                 });
             }(jQuery));
