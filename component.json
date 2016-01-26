@@ -1,7 +1,23 @@
 {
-    "name" : "synth",
-    "version" : "0.0.1",
-    "dependencies" : {
-        "jquery.midikeys" : "git://github.com/mdomi/jquery.midikeys.git"
-    }
+  "name": "synth",
+  "version": "0.0.1",
+  "dependencies": {
+    "midikeys": "~1.1.0"
+  },
+  "main": "synth.js",
+  "homepage": "https://github.com/mdomi/synth",
+  "authors": [
+    "Mike Dominice <mike@mikedominice.com>"
+  ],
+  "description": "",
+  "moduleType": [],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
 }
