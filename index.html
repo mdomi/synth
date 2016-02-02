@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Synth Demo</title>
+        <meta name="description" content="Demo application for keys.js plugin">
+        <meta name="viewport" content="width=device-width">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="demo/demo.css">
+    </head>
+    <body>
+        <form class="synth-control-group-container">
+            <fieldset id="osc1">
+                <legend>Oscillator 1</legend>
+                <div class="control-group">
+                    <label>Wave type</label>
+                    <div class="checkbox">
+                        <input id="osc1-wave-type-sine" name="osc1-wave-type" type="radio" value="sine">
+                        <label for="osc1-wave-type-sine">sine</label>
+                    </div>
+                    <div class="checkbox">
+                        <input id="osc1-wave-type-square" name="osc1-wave-type" type="radio" value="square">
+                        <label for="osc1-wave-type-square">square</label>
+                    </div>
+                    <div class="checkbox">
+                        <input id="osc1-wave-type-sawtooth" name="osc1-wave-type" type="radio" value="sawtooth">
+                        <label for="osc1-wave-type-sawtooth">sawtooth</label>
+                    </div>
+                    <div class="checkbox">
+                        <input id="osc1-wave-type-triangle" name="osc1-wave-type" type="radio" value="triangle">
+                        <label for="osc1-wave-type-triangle">triangle</label>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Octave</label>
+                    <div class="checkbox">
+                        <input id="osc1-octave-neg-2" name="osc1-octave" type="radio" value="-2">
+                        <label for="osc1-octave-neg-2">-2</label>
+                    </div>
+                    <div class="checkbox">
+                        <input id="osc1-octave-neg-1" name="osc1-octave" type="radio" value="-1">
+                        <label for="osc1-octave-neg-1">-1</label>
+                    </div>
+                    <div class="checkbox">
+                        <input id="osc1-octave-zero" name="osc1-octave" type="radio" value="0">
+                        <label for="osc1-octave-zero">0</label>
+                    </div>
+                    <div class="checkbox">
+                        <input id="osc1-octave-pos-1" name="osc1-octave" type="radio" value="1">
+                        <label for="osc1-octave-pos-1">+1</label>
+                    </div>
+                    <div class="checkbox">
+                        <input id="osc1-octave-pos-2" name="osc1-octave" type="radio" value="2">
+                        <label for="osc1-octave-pos-2">+2</label>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset id="osc2">
+                <legend>Oscillator 2</legend>
+                <div class="control-group">
+                    <label>Wave type</label>
+                    <div class="checkbox">
+                        <input id="osc2-wave-type-sine" name="osc2-wave-type" type="radio" value="sine">
+                        <label for="osc2-wave-type-sine">sine</label>
+                    </div>
+                    <div class="checkbox">
+                        <input id="osc2-wave-type-square" name="osc2-wave-type" type="radio" value="square">
+                        <label for="osc2-wave-type-square">square</label>
+                    </div>
+                    <div class="checkbox">
+                        <input id="osc2-wave-type-sawtooth" name="osc2-wave-type" type="radio" value="sawtooth">
+                        <label for="osc2-wave-type-sawtooth">sawtooth</label>
+                    </div>
+                    <div class="checkbox">
+                        <input id="osc2-wave-type-triangle" name="osc2-wave-type" type="radio" value="triangle">
+                        <label for="osc2-wave-type-triangle">triangle</label>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Octave</label>
+                    <div class="checkbox">
+                        <input id="osc2-octave-neg-2" name="osc2-octave" type="radio" value="-2">
+                        <label for="osc2-octave-neg-2">-2</label>
+                    </div>
+                    <div class="checkbox">
+                        <input id="osc2-octave-neg-1" name="osc2-octave" type="radio" value="-1">
+                        <label for="osc2-octave-neg-1">-1</label>
+                    </div>
+                    <div class="checkbox">
+                        <input id="osc2-octave-zero" name="osc2-octave" type="radio" value="0">
+                        <label for="osc2-octave-zero">0</label>
+                    </div>
+                    <div class="checkbox">
+                        <input id="osc2-octave-pos-1" name="osc2-octave" type="radio" value="1">
+                        <label for="osc2-octave-pos-1">+1</label>
+                    </div>
+                    <div class="checkbox">
+                        <input id="osc2-octave-pos-2" name="osc2-octave" type="radio" value="2">
+                        <label for="osc2-octave-pos-2">+2</label>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>Filter</legend>
+                <div class="control-group">
+                    <label for="filter-type">Type</label>
+                    <div class="checkbox">
+                        <input id="filter-type-lowpass" name="filter-type" type="radio" value="lowpass">
+                        <label for="filter-type-lowpass">lowpass</label>
+                    </div>
+                    <div class="checkbox">
+                        <input id="filter-type-highpass" name="filter-type" type="radio" value="highpass">
+                        <label for="filter-type-highpass">highpass</label>
+                    </div>
+                    <div class="checkbox">
+                        <input id="filter-type-bandpass" name="filter-type" type="radio" value="bandpass">
+                        <label for="filter-type-bandpass">bandpass</label>
+                    </div>
+                </div>
+                <div class="control-group control-group-assignable" data-param="filterFrequency">
+                    <label for="freq">Cutoff <span class="param-display" id="freq-display"></span></label>
+                    <input id="freq" type="range" min="0" max="100"
+                        data-steps="[20, 60, 250, 1000, 4000, 12000]">
+                </div>
+                <div class="control-group control-group-assignable"  data-param="filterQ">
+                    <label for="q">Q</label>
+                    <input id="q" type="range" min="0" max="100">
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>LFO</legend>
+                <div class="control-group">
+                    <label for="lfo-wave-type">Wave type</label>
+                    <div class="checkbox">
+                        <input id="lfo-wave-type-sine" name="lfo-wave-type" type="radio" value="sine">
+                        <label for="lfo-wave-type-sine">sine</label>
+                    </div>
+                    <div class="checkbox">
+                        <input id="lfo-wave-type-square" name="lfo-wave-type" type="radio" value="square">
+                        <label for="lfo-wave-type-square">square</label>
+                    </div>
+                    <div class="checkbox">
+                        <input id="lfo-wave-type-sawtooth" name="lfo-wave-type" type="radio" value="sawtooth">
+                        <label for="lfo-wave-type-sawtooth">sawtooth</label>
+                    </div>
+                    <div class="checkbox">
+                        <input id="lfo-wave-type-triangle" name="lfo-wave-type" type="radio" value="triangle">
+                        <label for="lfo-wave-type-triangle">triangle</label>
+                    </div>
+                </div>
+                <div class="control-group control-group-assignable" data-param="frequency">
+                    <label for="lfo-freq">Rate <span id="lfo-freq-display" class="param-display"></span></label>
+                    <input id="lfo-freq" type="range" min="0" max="100"
+                        data-steps="[0.2, 0.4, 0.8, 1.5, 3, 6, 12, 25, 50]">
+                </div>
+                <div class="control-group control-group-assignable" data-param="amplitude">
+                    <label for="lfo-amp">Swing</label>
+                    <input id="lfo-amp" type="range" min="0" max="100">
+                </div>
+            </fieldset>
+            <fieldset id="filterEnvelope">
+                <legend>Filter Envelope</legend>
+            </fieldset>
+            <fieldset id="volumeEnvelope">
+                <legend>Volume Envelope</legend>
+            </fieldset>
+            <fieldset>
+                <legend>Output</legend>
+                <div class="control-group control-group-assignable">
+                    <label for="volume">Master Volume <span class="param-display" id="volume-display"></span></label>
+                    <input id="volume" type="range" min="0" max="100" value="1">
+                </div>
+            </fieldset>
+            <button type="button" id="cc-arm">Arm CC</button>
+        </form>
+        <template id="envelope-controls-template">
+            <div class="control-group control-group-assignable" data-param="attack">
+                <label>Attack <span class="param-display attack-display"></span></label>
+                <input class="attack-control" type="range" min="0" max="100"
+                    data-param="attack"
+                    data-steps="[0.01, 0.1, 1, 10]">
+            </div>
+            <div class="control-group control-group-assignable" data-param="decay">
+                <label>Decay <span class="param-display decay-display"></span></label>
+                <input class="decay-control" type="range" min="0" max="100"
+                    data-param="decay"
+                    data-steps="[0.01, 0.1, 1, 10]">
+            </div>
+            <div class="control-group control-group-assignable" data-param="sustain">
+                <label>Sustain <span class="param-display sustain-display"></span></label>
+                <input class="sustain-control" type="range" min="0" max="100"
+                    data-param="sustain"
+                    data-steps="[0, 0.2, 0.4, 0.6, 0.8, 1]">
+            </div>
+            <div class="control-group control-group-assignable" data-param="release">
+                <label>Release <span class="param-display release-display"></span></label>
+                <input class="release-control" type="range" min="0" max="100"
+                    data-param="release"
+                    data-steps="[0.01, 0.1, 1, 10]">
+            </div>
+        </template>
+        <script src="bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="bower_components/midikeys/lib/jquery.midikeys.min.js"></script>
+        <script src="synth.js"></script>
+        <script src="demo/demo.js"></script>
+    </body>
+</html>

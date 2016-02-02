@@ -1,0 +1,80 @@
+body {
+    background-color: #333;
+    color: #45C2DE;
+    margin: 0;
+    padding: 0;
+}
+
+.synth-control-group-container {
+    vertical-align: top;
+    margin: 0;
+    padding: 8px;
+
+    font-family: 'Open Sans', sans-serif;
+}
+
+.synth-control-group-container fieldset {
+    display: inline-block;
+    vertical-align: top;
+    width: 150px;
+    height: 400px;
+    margin: 0 8px 0 0;
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+
+.synth-control-group-container legend {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 16px;
+}
+
+.synth-control-group-container .checkbox label {
+    display: inline;
+    font-size: 12px;
+}
+
+.synth-control-group-container .checkbox input {
+    margin: 2px;
+    vertical-align: middle;
+}
+
+.synth-control-group-container label {
+    display: block;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.synth-control-group-container input[type="range"] {
+    display: block;
+    margin: 0;
+}
+
+.synth-control-group-container .param-display {
+    float: right;
+}
+
+.synth-control-group-container .control-group {
+    margin-bottom: 8px;
+}
+
+.synth-control-group-container button {
+    background-color: #45C2DE;
+    color: #333;
+    border: 1px solid #ddd;
+    padding: 4px 8px;
+}
+
+.synth-control-group-container button:active {
+    background-color: #50DFFF;
+}
+
+.synth-control-group-container button:focus {
+    outline: none;
+}
+
+.cc-armed .control-group-assignable:hover {
+    background-color: #215D6B;
+    cursor: pointer;
+}
