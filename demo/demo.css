@@ -16,7 +16,7 @@ body {
 .synth-control-group-container fieldset {
     display: inline-block;
     vertical-align: top;
-    width: 150px;
+    width: 130px;
     height: 400px;
     margin: 0 8px 0 0;
     padding: 8px;
@@ -33,6 +33,7 @@ body {
 .synth-control-group-container .checkbox label {
     display: inline;
     font-size: 12px;
+    margin-bottom: 4px;
 }
 
 .synth-control-group-container .checkbox input {
@@ -48,6 +49,7 @@ body {
 
 .synth-control-group-container input[type="range"] {
     display: block;
+    width: 100%;
     margin: 0;
 }
 

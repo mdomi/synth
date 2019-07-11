@@ -6,7 +6,7 @@
 (function (root, factory) {
     'use strict';
 
-    var libaryName = 'synth';
+    const libaryName = 'synth';
     if (typeof define !== 'undefined' && define.amd) {
         define([], function () {
             root[libaryName] = factory(root);
@@ -19,34 +19,41 @@
 }(this, function (window) {
     'use strict';
 
-    var MIDI = Object.defineProperties({}, {
+    const MIDI = Object.defineProperties({}, {
         NOTE_ON : {
             value : 0x90,
-            writeable : false
+            writeable : false,
+            enumerable : true
         },
         NOTE_OFF : {
             value : 0x80,
-            writeable : false
+            writeable : false,
+            enumerable : true
         },
         POLYPHONIC_KEY_PRESSURE : {
             value : 0xa0,
-            writeable : false
+            writeable : false,
+            enumerable : true
         },
         CONTROL_CHANGE : {
             value : 0xb0,
-            writeable : false
+            writeable : false,
+            enumerable : true
         },
         PROGRAM_CHANGE : {
             value : 0xc0,
-            writeable : false
+            writeable : false,
+            enumerable : true
         },
         CHANNEL_PRESSURE : {
             value : 0xd0,
-            writeable : false
+            writeable : false,
+            enumerable : true
         },
         PITCH_BEND_CHANGE : {
             value : 0xe0,
-            writeable : false
+            writeable : false,
+            enumerable : true
         },
         getMessageType : {
             value : function (midiEvent) {
@@ -62,17 +69,17 @@
         }
     });
 
-    var MAX_VELOCITY = 0x7f,
+    const MAX_VELOCITY = 0x7f,
         KEY_PREFIX = '';
 
-    var WAVE_TYPES = {
+    const WAVE_TYPES = {
         SINE : 'sine',
         SQUARE : 'square',
         SAWTOOTH : 'sawtooth',
         TRIANGLE : 'triangle'
     };
 
-    var FILTER_TYPES = {
+    const FILTER_TYPES = {
         LOWPASS : 'lowpass',
         HIGHPASS : 'highpass',
         BANDPASS : 'bandpass',
@@ -84,14 +91,14 @@
     };
 
     function scaleTo(inMin, inMax, value, outMin, outMax) {
-        var inRange = inMax - inMin,
+        const inRange = inMax - inMin,
             outRange = outMax - outMin,
             slope = outRange / inRange;
         return (slope * (value - inMin)) + outMin;
     }
 
     function stepValue(min, max, value, steps) {
-        var rangeSize = (max - min) / (steps.length - 1);
+        const rangeSize = (max - min) / (steps.length - 1);
         for (var i = 1; i < steps.length; i = i + 1) {
             if (value <= steps[i]) {
                 return scaleTo(steps[i - 1], steps[i], value, min + (rangeSize * (i - 1)), min + (rangeSize * i));
@@ -100,18 +107,16 @@
     }
 
     function unstepValue(min, max, value, steps) {
-        var rangeSize = (max - min) / (steps.length - 1);
+        const rangeSize = (max - min) / (steps.length - 1);
         for (var i = 1; i < steps.length; i = i + 1) {
             if (value <= (min + (i * rangeSize))) {
-                return synth.scaleTo(min + ((i - 1) * rangeSize), min + (i * rangeSize), value, steps[i - 1], steps[i]);
+                return scaleTo(min + ((i - 1) * rangeSize), min + (i * rangeSize), value, steps[i - 1], steps[i]);
             }
         }
     }
 
     function midiNoteToFrequency(note, octaveAdjust) {
-        octaveAdjust = octaveAdjust || 0;
-        note = note + (octaveAdjust * 12);
-        return 440 * Math.pow(2, (note - 69) / 12.0);
+        return 440 * Math.pow(2, ((note + ((octaveAdjust || 0) * 12)) - 69) / 12.0);
     }
 
     function slice(array, start, end) {
@@ -149,7 +154,7 @@
     ADSREnvelopeConfig.defaults = {
         attack : 0.1,
         decay : 0.1,
-        sustain : 0.5,
+        sustain : 1,
         release : 0.1
     };
 
@@ -158,8 +163,39 @@
         options = extend({}, ADSREnvelope.defaults, options);
         var config = options.config;
 
+        Object.defineProperties(this, {
+            max : {
+                enumerable : true,
+                get : function () {
+                    return options.max;
+                },
+                set : function (value) {
+                    options.max = value;
+                }
+            },
+            min : {
+                enumerable : true,
+                get : function () {
+                    return options.min;
+                },
+                set : function (value) {
+                    options.min = value;
+                }
+            },
+            config : {
+                enumerable : true,
+                get : function () {
+                    return config;
+                }
+            }
+        });
+
+        if (!options.config) {
+            throw new Error('no config provided');
+        }
+
         this.noteOn = function (param) {
-            var now = context.currentTime;
+            const now = context.currentTime;
             param.cancelScheduledValues(now);
             param.setValueAtTime(options.min, now);
             param.linearRampToValueAtTime(options.max, now + config.attack);
@@ -167,8 +203,8 @@
         };
 
         this.noteOff = function (param) {
-            var now = context.currentTime,
-                value = param.value;
+            const now = context.currentTime;
+            const value = param.value;
             param.cancelScheduledValues(now);
             param.setValueAtTime(value, now);
             param.linearRampToValueAtTime(options.min, now + config.release);
@@ -189,56 +225,79 @@
             config : options.volumeEnvelope
         });
 
+        var filterEnvelopeOptions = extend({}, opts.filterFreq, {
+            min : 0,
+            max : opts.filterFrequency,
+            config : options.filterEnvelope
+        });
+
         var gain = context.createGain();
 
-        Object.defineProperty(this, 'gain', {
-            get : function () {
-                return gain;
-            }
-        });
+        var filter = context.createBiquadFilter();
+
         var oscillatorNode = context.createOscillator();
         oscillatorNode.type = opts.type;
         oscillatorNode.start();
-
-        Object.defineProperty(this, 'frequency', {
-            get : function () {
-                return oscillatorNode.frequency;
-            }
-        });
-
-        Object.defineProperty(this, 'type', {
-            get : function () {
-                return oscillatorNode.type;
-            },
-            set : function (value) {
-                oscillatorNode.type = value;
-            }
-        });
 
         function setOscillatorFrequency() {
             oscillatorNode.frequency.value = midiNoteToFrequency(note, opts.octave);
         }
 
         var volumeEnvelope = new ADSREnvelope(context, volumeEnvelopeOptions);
-        oscillatorNode.connect(gain);
+        var filterEnvelope = new ADSREnvelope(context, filterEnvelopeOptions);
+        oscillatorNode.connect(filter);
+        filter.connect(gain);
         setOscillatorFrequency();
 
-        Object.defineProperty(this, 'octave', {
-            get : function () {
-                return opts.octave;
+        Object.defineProperties(this, {
+            gain : {
+                get : function () {
+                    return gain;
+                }
             },
-            set : function (value) {
-                opts.octave = value;
-                setOscillatorFrequency();
+            filterFrequency : {
+                get : function () {
+                    return filterEnvelope.max;
+                },
+                set : function (value) {
+                    filterEnvelope.max = value;
+                }
+            },
+            frequency : {
+                enumerable : true,
+                get : function () {
+                    return oscillatorNode.frequency;
+                }
+            },
+            type : {
+                enumerable : true,
+                get : function () {
+                    return oscillatorNode.type;
+                },
+                set : function (value) {
+                    oscillatorNode.type = value;
+                }
+            },
+            octave : {
+                enumerable : true,
+                get : function () {
+                    return opts.octave;
+                },
+                set : function (value) {
+                    opts.octave = value;
+                    setOscillatorFrequency();
+                }
             }
         });
 
         this.noteOn = function () {
             volumeEnvelope.noteOn(gain.gain);
+            filterEnvelope.noteOn(filter.frequency);
         };
 
         this.noteOff = function () {
             volumeEnvelope.noteOff(gain.gain);
+            filterEnvelope.noteOff(filter.frequency);
         };
 
     }
@@ -254,6 +313,7 @@
     OscillatorNote.defaults = {
         velocity : MAX_VELOCITY,
         volumeEnvelope : extend({}, ADSREnvelope.defaults),
+        filterEnvelope : extend({}, ADSREnvelope.defaults),
         type : WAVE_TYPES.SINE,
         octave : 0
     };
@@ -268,7 +328,9 @@
             var oscillator = new OscillatorNote(opts.context, note, {
                 type : opts.options.type,
                 velocity : velocity,
+                filterFrequency : opts.options.filterFrequency,
                 volumeEnvelope : opts.options.volumeEnvelope,
+                filterEnvelope : opts.options.filterEnvelope,
                 octave : opts.options.octave
             });
             opts.oscillators[key] = oscillator;
@@ -291,12 +353,12 @@
         var options = {};
         options.type = opts.type || SYNTH_DEFAULTS.type;
         options.filterType = opts.filterType || SYNTH_DEFAULTS.filterType;
+        options.filterFrequency = opts.filterFrequency || SYNTH_DEFAULTS.filterFrequency;
         options.octave = opts.octave || 0;
         return options;
     }
 
     function LFO(context) {
-
 
         var lfo = context.createOscillator();
         lfo.type = WAVE_TYPES.SINE;
@@ -308,30 +370,33 @@
         lfo.connect(lfoGain);
         lfo.start();
 
-        Object.defineProperty(this, 'type', {
-            get : function () {
-                return lfo.type;
+        Object.defineProperties(this, {
+            type : {
+                get : function () {
+                    return lfo.type;
+                },
+                set : function (value) {
+                    lfo.type = value;
+                },
+                enumerable : true
             },
-            set : function (value) {
-                lfo.type = value;
-            }
-        });
-
-        Object.defineProperty(this, 'frequency', {
-            get : function () {
-                return lfo.frequency.value;
+            frequency : {
+                get : function () {
+                    return lfo.frequency.value;
+                },
+                set : function (value) {
+                    lfo.frequency.value = value;
+                },
+                enumerable : true
             },
-            set : function (value) {
-                lfo.frequency.value = value;
-            }
-        });
-
-        Object.defineProperty(this, 'amplitude', {
-            get : function () {
-                return lfoGain.gain.value;
-            },
-            set : function (value) {
-                lfoGain.gain.value = value;
+            amplitude : {
+                get : function () {
+                    return lfoGain.gain.value;
+                },
+                set : function (value) {
+                    lfoGain.gain.value = value;
+                },
+                enumerable : true
             }
         });
 
@@ -366,32 +431,65 @@
             return gain.disconnect.apply(gain, arguments);
         };
 
-        Object.defineProperty(this, 'octave', {
-            get : function () {
-                return options.octave;
+        Object.defineProperties(this, {
+            octave : {
+                enumerable : true,
+                get : function () {
+                    return options.octave;
+                },
+                set : function (value) {
+                    options.octave = parseInt(value, 10);
+                    Object.keys(oscillators).forEach(function (key) {
+                        var oscillator = oscillators[key];
+                        if (oscillator) {
+                            oscillator.octave = value;
+                        }
+                    });
+                }
             },
-            set : function (value) {
-                options.octave = parseInt(value, 10);
-                Object.keys(oscillators).forEach(function (key) {
-                    var oscillator = oscillators[key];
-                    if (oscillator) {
-                        oscillator.octave = value;
-                    }
-                });
-            }
-        });
-
-        Object.defineProperty(this, 'type', {
-            get : function () {
-                return options.type;
+            filterType : {
+                enumerable : true,
+                get : function () {
+                    return options.filterType;
+                },
+                set : function (value) {
+                    options.filterType = value;
+                    Object.keys(oscillators).forEach(function (key) {
+                        var oscillator = oscillators[key];
+                        if (oscillator) {
+                            oscillator.filterType = value;
+                        }
+                    });
+                }
             },
-            set : function (value) {
-                options.type = value;
-                Object.keys(oscillators).forEach(function (key) {
-                    if (oscillators[key]) {
-                        oscillators[key].type = value;
-                    }
-                });
+            filterFrequency : {
+                enumerable : true,
+                get : function () {
+                    return options.filterFrequency;
+                },
+                set : function (value) {
+                    options.filterFrequency = value;
+                    Object.keys(oscillators).forEach(function (key) {
+                        var oscillator = oscillators[key];
+                        if (oscillator) {
+                            oscillator.filterFrequency = value;
+                        }
+                    });
+                }
+            },
+            type : {
+                enumerable : true,
+                get : function () {
+                    return options.type;
+                },
+                set : function (value) {
+                    options.type = value;
+                    Object.keys(oscillators).forEach(function (key) {
+                        if (oscillators[key]) {
+                            oscillators[key].type = value;
+                        }
+                    });
+                }
             }
         });
 
@@ -447,22 +545,21 @@
         var lfo = new LFO(context);
 
         options.context = context;
-        filter.connect(gain);
-        filter.type = options.filterType;
 
         var filterEnvelopeConfig = new ADSREnvelopeConfig(opts.filterEnvelope);
         var volumeEnvelopeConfig = new ADSREnvelopeConfig(opts.volumeEnvelope);
 
         var oscOptions = extend({}, options, {
-            volumeEnvelope : volumeEnvelopeConfig
+            volumeEnvelope : volumeEnvelopeConfig,
+            filterEnvelope : filterEnvelopeConfig
         });
         var osc1 = new Oscillator(oscOptions);
         var osc2 = new Oscillator(extend({}, oscOptions, {
             octave : 1
         }));
 
-        osc1.connect(filter);
-        osc2.connect(filter);
+        osc1.connect(gain);
+        osc2.connect(gain);
 
         this._controlChanges = {};
 
@@ -500,26 +597,32 @@
             },
             filterType : {
                 get : function () {
-                    return filter.type;
+                    return options.filterType;
                 },
                 set : function (value) {
-                    filter.type = value;
+                    options.filterType = value;
+                    osc1.filterType = value;
+                    osc2.filterType = value;
                 }
             },
             filterFrequency : {
                 get : function () {
-                    return filter.frequency.value;
+                    return options.filterFrequency;
                 },
                 set : function (value) {
-                    filter.frequency.value = value;
+                    options.filterFrequency = value;
+                    osc1.filterFrequency = value;
+                    osc2.filterFrequency = value;
                 }
             },
             filterQ : {
                 get : function () {
-                    return filter.Q.value;
+                    return options.filterQ;
                 },
                 set : function (value) {
-                    filter.Q.value = value;
+                    options.filterQ = value;
+                    osc1.filterQ = value;
+                    osc2.filterQ = value;
                 }
             },
             gain : {
@@ -578,7 +681,8 @@
         Object.defineProperty(Synth, key, {
             get : function () {
                 return value;
-            }
+            },
+            enumerable : true
         });
     });
 
@@ -587,18 +691,26 @@
         Object.defineProperty(Synth, key, {
             get : function () {
                 return value;
-            }
+            },
+            enumerable : true
         });
     });
 
     var SYNTH_DEFAULTS = Object.defineProperties({}, {
         type : {
             value : Synth.SINE,
-            writeable : false
+            writeable : false,
+            enumerable : true
         },
         filterType : {
             value : Synth.LOWPASS,
-            writeable : false
+            writeable : false,
+            enumerable : true
+        },
+        filterFrequency : {
+            value : 650,
+            writeable : false,
+            enumerable : true
         }
     });
 
@@ -606,7 +718,8 @@
         Object.defineProperty(Synth, key, {
             get : function () {
                 return MIDI[key];
-            }
+            },
+            enumerable : true
         });
     });
 
@@ -614,17 +727,20 @@
     Object.defineProperty(Synth, 'defaults', {
         get : function () {
             return SYNTH_DEFAULTS;
-        }
+        },
+        enumerable : true
     });
 
     return Object.defineProperties({}, {
         Synth : {
             value : Synth,
-            writeable : false
+            writeable : false,
+            enumerable : true
         },
         MIDI : {
             value : MIDI,
-            writeable : false
+            writeable : false,
+            enumerable : true
         },
         scaleTo : {
             value : scaleTo,

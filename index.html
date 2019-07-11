@@ -203,8 +203,43 @@
                     data-steps="[0.01, 0.1, 1, 10]">
             </div>
         </template>
-        <script src="//mdomi.github.io/jquery.midikeys/lib/midikeys.min.js"></script>
-        <script src="synth.js"></script>
-        <script src="demo/demo.js"></script>
+        <script>
+            (function () {
+                function load(name) {
+
+                    return new Promise(function (resolve, reject) {
+                        if (document.readyState !== 'loading') {
+                            addScript();
+                        } else {
+                            document.addEventListener('DOMContentLoaded', addScript);
+                        }
+
+                        function addScript() {
+                            var s = document.createElement('script');
+                            s.onload = resolve;
+                            s.onerror = reject;
+                            s.src = name;
+                            document.body.appendChild(s);
+                        }
+                    })
+
+                }
+
+                function loadApp() {
+                    return Promise.all([
+                        load('synth.js'),
+                        load('delay.js')
+                    ]).then(function () {
+                        return load('demo/demo.js');
+                    });
+                }
+
+                load('//mdomi.github.io/jquery.midikeys/lib/midikeys.min.js').catch(function () {
+                    load('bower_components/midikeys/lib/midikeys.min.js');
+                }).then(loadApp).then(function () {
+                    console.log('App code loaded');
+                });
+            }());
+        </script>
     </body>
 </html>

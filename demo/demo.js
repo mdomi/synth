@@ -1,27 +1,23 @@
-(function (window, document, synth, MIDIKeys) {
+(function (window, document, synth, MIDIKeys, Delay) {
     'use strict';
 
     window.NodeList.prototype.forEach = Array.prototype.forEach;
     window.NodeList.prototype.map = Array.prototype.map;
 
     var armedControl = null;
-    var context = new window.AudioContext();
+    var context = window.audioContext = new window.AudioContext();
     var buffer = context.createGain();
+    var delay = Delay.create(context);
     buffer.gain.value = 0.5;
     buffer.connect(context.destination);
 
+    delay.connect(buffer);
+    delay.delayGain.value = 0;
+
     var s = new synth.Synth({
-        context : context,
-        type : synth.Synth.SAWTOOTH,
-        filterFrequency : 500,
-        volumeEnvelope : {
-            attack : 0.01,
-            decay : 0.01,
-            sustain : 1,
-            release : 0.5
-        }
+        context : context
     });
-    s.connect(buffer);
+    s.connect(delay.input);
 
     function scaleTo100(min, max, value) {
         return synth.scaleTo(min, max, value, 0, 100);
@@ -67,10 +63,12 @@
     function setupMidi() {
 
         ready(function () {
-            var midiKeys = new MIDIKeys(document.body, {
-                noteOnVelocity : 0x0f
-            });
-            midiKeys.option('onmidimessage', handleMidiMessage);
+            if (typeof MIDIKeys !== 'undefined') {
+                var midiKeys = new MIDIKeys(document.body, {
+                    noteOnVelocity : 0x0f
+                });
+                midiKeys.option('onmidimessage', handleMidiMessage);
+            }
         });
 
         window.navigator.requestMIDIAccess({
@@ -300,4 +298,4 @@
 
     });
 
-}(window, window.document, window.synth, window.MIDIKeys));
+}(window, window.document, window.synth, window.MIDIKeys, window.Delay));
